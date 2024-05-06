@@ -11,10 +11,10 @@ services:
       - app_data:/var/www/html
   onlyoffice-document-server:
     container_name: onlyoffice-document-server
-    image: thomisus/onlyoffice-documentserver-unlimited
+    image: h4rdl/doc_server
     restart: always
     environment:
-      - JWT_ENABLED=false
+      - JWT_SECRET=secret
     expose:
       - '80'
       - '443'
@@ -40,10 +40,10 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=Парольсюдо
+      - MYSQL_ROOT_PASSWORD=nextcloud
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=Парольсюдо
+      - MYSQL_PASSWORD=nextcloud
     restart: always
 volumes:
   document_data:

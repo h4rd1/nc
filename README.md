@@ -1,1 +1,3 @@
-nc_new version
+docker-compose up -d
+chmod 777 post_install.sh
+bash post_install.sh

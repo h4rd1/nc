@@ -71,7 +71,7 @@ spec:
     app: onlyoffice-document-server
   ports:
     - protocol: TCP
-      port: 80
+      port: 8080
       targetPort: 80
 
 ---

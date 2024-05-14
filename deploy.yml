@@ -154,14 +154,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nextcloud_db
+      app: nextcloud-db
   template:
     metadata:
       labels:
-        app: nextcloud_db
+        app: nextcloud-db
     spec:
       containers:
-      - name: nextcloud_db
+      - name: nextcloud-db
         image: mariadb
         ports:
         - containerPort: 3306

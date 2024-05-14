@@ -50,11 +50,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nextcloud_db
+  name: nextcloud-db
   namespace: nc
 spec:
   selector:
-    app: nextcloud_db
+    app: nextcloud-db
   ports:
     - protocol: TCP
       port: 3306

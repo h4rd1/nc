@@ -1,129 +1,15 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: nc-pv
-  labels:
-    type: local
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: nc-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
----
-apiVersion: v1
 kind: Service
 metadata:
-  name: app-server
+  name: nextcloud-db
 spec:
   selector:
-    app: app-server
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nextcloud_db
-spec:
-  selector:
-    app: nextcloud_db
+    app: nextcloud-db
   ports:
     - protocol: TCP
       port: 3306
       targetPort: 3306
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: onlyoffice-document-server
-spec:
-  selector:
-    app: onlyoffice-document-server
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nextcloud-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: app-server
-  template:
-    metadata:
-      labels:
-        app: app-server
-    spec:
-      containers:
-      - name: app-server
-        image: nextcloud:27.1.7-fpm
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - mountPath: "/var/www/html/data"
-          name: nextcloud-data
-        env:
-        - name: MYSQL_HOST
-          value: "mysql-service"
-        - name: MYSQL_USER
-          value: "nextcloud"
-        - name: MYSQL_PASSWORD
-          value: "password"
-        - name: MYSQL_DATABASE
-          value: "nextcloud"
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - mountPath: "/etc/nginx/conf.d/default.conf"
-          name: nginx-config
-      volumes:
-      - name: nextcloud-data
-        persistentVolumeClaim:
-          claimName: nc-pvc
-      - name: nginx-config
-        configMap:
-          name: nginx-config
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: onlyoffice-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: onlyoffice-document-server
-  template:
-    metadata:
-      labels:
-        app: onlyoffice-document-server
-    spec:
-      containers:
-      - name: onlyoffice-document-server
-        image: h4rdl/doc_server
-        ports:
-        - containerPort: 80
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -133,26 +19,26 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nextcloud_db
+      app: nextcloud-db
   template:
     metadata:
       labels:
-        app: nextcloud_db
+        app: nextcloud-db
     spec:
       containers:
-      - name: nextcloud_db
-        image: mariadb
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "rootpassword"
-        - name: MYSQL_DATABASE
-          value: "nextcloud"
-        volumeMounts:
-        - mountPath: "/var/lib/mysql"
-          name: mysql-data
+        - name: nextcloud-db
+          image: mariadb
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "rootpassword"
+            - name: MYSQL_DATABASE
+              value: "nextcloud"
+          volumeMounts:
+            - mountPath: "/var/lib/mysql"
+              name: mysql-data
       volumes:
-      - name: mysql-data
-        persistentVolumeClaim:
-          claimName: mysql-pvc
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc

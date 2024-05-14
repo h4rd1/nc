@@ -177,27 +177,5 @@ spec:
       - name: mysql-data
         persistentVolumeClaim:
           claimName: mysql-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-  namespace: nc
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx-server
-  template:
-    metadata:
-      labels:
-        app: nginx-server
-    spec:
-      containers:
-      - name: nginx-server
-        image: nginx
-       ports:
-        - containerPort: 80
-        - containerPort: 443
       
           

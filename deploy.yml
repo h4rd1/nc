@@ -156,18 +156,18 @@ spec:
         app: nginx-server
     spec:
       containers:
-      - name: nginx-server
-        image: nginx
-      ports:
-        - containerPort: 80
-        - containerPort: 443
-      volumeMounts:
-        - mountPath: "/etc/nginx/conf.d/default.conf"
-          name: nginx-config
+        - name: nginx-server
+          image: nginx
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          volumeMounts:
+            - mountPath: "/etc/nginx/conf.d/default.conf"
+              name: nginx-config
       volumes:
-      - name: nextcloud-data
-        persistentVolumeClaim:
-          claimName: nc-pvc
-      - name: nginx-config
-        configMap:
-          name: nginx-config
+        - name: nextcloud-data
+          persistentVolumeClaim:
+            claimName: nc-pvc
+        - name: nginx-config
+          configMap:
+            name: nginx-config

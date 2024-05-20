@@ -1,0 +1,18 @@
+version: "3.2"
+services:
+  [service-name]:
+    image: [docker-image]
+    ports:
+      - "[port]:[port]"
+    volumes:
+      - type: volume
+        source: [volume-name]
+        target: /nfs
+        volume:
+          nocopy: true
+volumes:
+  [volume-name]:
+    driver_opts:
+      type: "nfs"
+      o: "addr=[ip-address],nolock,soft,rw"
+      device: ":[path-to-directory]"

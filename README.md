@@ -13,4 +13,4 @@ mv nginx.conf.ssl nginx.conf
 
 
 
-docker volume create --driver local --opt type=nfs --opt o=addr=ip,rw --opt device=:/mnt/docker nfs-volume
+docker volume create --driver local --opt type=nfs --opt o=addr=[ip],rw --opt device=:/mnt/docker nfs-volume

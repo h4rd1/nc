@@ -2,7 +2,7 @@ version: '3'
 services:
   app:
     container_name: app-server
-    image: nextcloud:fpm
+    image: nextcloud:27-fpm
     restart: always
     expose:
       - '80'

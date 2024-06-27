@@ -12,5 +12,8 @@ add certs
 mv nginx.conf.ssl nginx.conf
 
 
+Не забудь поменять секретные ключи...
+.sh .yml
+
 
 docker volume create --driver local --opt type=nfs --opt o=addr=[ip],rw --opt device=:/mnt/docker nfs-volume

@@ -1,0 +1,53 @@
+version: '3'
+services:
+  app:
+    container_name: app-server
+    image: nextcloud:27-fpm
+    restart: always
+    expose:
+      - '80'
+      - '9000'
+    volumes:
+      - app_data:/var/www/html
+  onlyoffice-document-server:
+    container_name: onlyoffice-document-server
+    image: onlyoffice/documentserver:latest
+    restart: always
+    environment:
+      - JWT_SECRET=secret
+    expose:
+      - '80'
+      - '443'
+    volumes:
+      - document_data:/var/www/onlyoffice/Data
+      - document_log:/var/log/onlyoffice
+  nginx:
+    container_name: nginx-server
+    image: nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./cert:/etc/nginx/cert
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - app_data:/var/www/html
+  db:
+    container_name: nextcloud_db
+    image: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=nextcloud
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+    restart: always
+volumes:
+  document_data:
+  document_log:
+  app_data:
+  mysql_data:
+

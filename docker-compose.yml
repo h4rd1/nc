@@ -6,7 +6,7 @@ services:
     links:
       - db
       - redis
-      - onlyoffice
+      - onlyoffice-document-server
     restart: always
     expose:
       - '80'

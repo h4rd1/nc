@@ -51,7 +51,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
 
   onlyoffice-document-server:
-    image: h4rdl/doc_server
+    image: h4rdl/doc_srv
     deploy:
       replicas: 1
     networks:

@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  nextcloud:
+    image: nextcloud:fpm
+    deploy:
+      replicas: 1
+    networks:
+      - nextcloud_net
+    volumes:
+      - app_data:/var/www/html
+    environment:
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=nextcloud
+      - POSTGRES_HOST=db:5432  # Имя сервиса базы данных
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD=nextcloud
+      - DEFAULT_PHONE_REGION=RU
+    depends_on:
+      - nginx
+      - db
+      - redis
+      - onlyoffice-document-server
+
+  db:
+    image: postgres:14
+    ports:
+      - 5432:5432
+    deploy:
+      replicas: 1
+    networks:
+      - nextcloud_net
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+
+  nginx:
+    image: nginx:latest
+    deploy:
+      replicas: 1
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - nextcloud_net  # Соединяем Nginx с вашей сетью
+    volumes:
+      - app_data:/var/www/html
+      - ./cert:/etc/nginx/cert
+      - ./nginx3.conf:/etc/nginx/nginx.conf
+    depends_on:
+     - redis
+     - nextcloud
+     - onlyoffice-document-server
+
+  onlyoffice-document-server:
+    image: onlyoffice/documentserver:latest
+    deploy:
+      replicas: 1
+    networks:
+      - nextcloud_net
+    ports:
+      - "8080:80"
+    environment:
+      - JWT_SECRET=secret
+    volumes:
+      - document_data:/var/www/onlyoffice/Data
+      - document_log:/var/log/onlyoffice
+    depends_on:
+      - nginx
+      - nextcloud
+  redis:
+    image: "redis:alpine"
+    command: redis-server --requirepass nextcloud
+    networks:
+      - nextcloud_net
+    volumes:
+      - ./redis/data:/var/lib/redis
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+networks:
+  nextcloud_net:
+    driver: overlay  # Ваша собственная сеть
+
+volumes:
+  app_data:
+  document_data:
+  document_log:
+  nextcloud_data:
+  db_data:

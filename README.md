@@ -1,4 +1,4 @@
-docker-compose up -d
+docker stack deploy -c docker-compose stack
 
 
 chmod 777 post_install.sh
